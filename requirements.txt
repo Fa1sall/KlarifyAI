@@ -3,7 +3,7 @@ uvicorn
 PyPDF2
 nltk
 sentence-transformers
-faiss-cpu
+pinecone
 google-generativeai
 python-dotenv
 databases

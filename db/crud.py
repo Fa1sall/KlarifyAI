@@ -1,4 +1,4 @@
-from sqlalchemy import insert, select
+from sqlalchemy import insert, select, and_
 from db.database import database
 from db.models import Document, Chunk, QARecord
 
@@ -17,10 +17,20 @@ async def save_chunks(document_id: int, chunks: list[str]):
     await database.execute_many(insert(Chunk), values)
 
 async def log_qa(document_id: int, question: str, answer: str, score: float = None):
-    query = insert(QARecord).values(
+    query = select(QARecord).where(
+        and_(
+            QARecord.document_id == document_id,
+            QARecord.question == question.strip(),
+            QARecord.answer == answer.strip()
+        )
+    )
+    exists = await database.fetch_one(query)
+    if exists:
+        return  
+    insert_query = insert(QARecord).values(
         document_id=document_id,
-        question=question,
-        answer=answer,
+        question=question.strip(),
+        answer=answer.strip(),
         score=score
     )
-    await database.execute(query)
+    await database.execute(insert_query)

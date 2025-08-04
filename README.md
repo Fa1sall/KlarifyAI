@@ -1,2 +1,0 @@
-# KlarifyAI
-Bajaj Finserv Hackathon
